@@ -1,3 +1,4 @@
+//main/cartPage.ts
 import { Page, Locator , FrameLocator, expect } from '@playwright/test';
 
 export class CartPage {
@@ -67,7 +68,7 @@ export class CartPage {
     const cardNumberField = frame.locator('input[placeholder="Card number"]');
     await cardNumberField.click();
     for (const digit of cardNumber) {
-        await cardNumberField.type(digit, { delay: 80 }); // small delay per digit
+        await cardNumberField.pressSequentially(digit, { delay: 100 }); // small delay per digit
     }
 
     // Fill expiry

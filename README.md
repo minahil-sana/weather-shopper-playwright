@@ -2,6 +2,14 @@
 
 Playwright end-to-end automation for the Weather Shopper demo site using a Page Object Model (POM) structure.
 
+Review updates applied:
+- Import aliases are used for project file imports.
+- `tsconfig.json` is added at the project root.
+- Spec file only calls a reusable flow function.
+- `pages/` folder is renamed to `main/`.
+- Payment test data is externalized to JSON.
+- Implemented reusable BaseProductPage using inheritance to eliminate duplicate code between Moisturizer and Sunscreen pages.
+
 ## Overview
 
 This project validates the moisturizer purchase flow on:
@@ -28,15 +36,18 @@ Automated test case title:
 
 ```text
 Weather_shopper/
-|- pages/
+|- main/
 |  |- homePage.ts
 |  |- moisturiserPage.ts
 |  |- cartPage.ts
 |  |- confirmationPage.ts
+|  |- tc001MoisturizerFlow.ts
 |- tests/
 |  |- tc-001-moisturizer-purchase.spec.ts
+|- test_data/
+|  |- payment-data.json
 |- playwright.config.ts
-|- manual-test-case.md
+|- tsconfig.json
 |- manual-testcase.md
 |- README.md
 ```
@@ -95,3 +106,6 @@ It can also be viewed in the playwright-report folder named as `index.html`.
 - Browser projects enabled by default: `chromium`, `firefox`, `webkit`.
 - Retry and worker behavior changes automatically on CI via `playwright.config.ts`.
 - Detailed manual test documentation is available in `manual-testcase.md`.
+- Payment inputs used in automation are read from `test_data/payment-data.json`.
+
+
