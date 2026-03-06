@@ -6,7 +6,8 @@
     "baseUrl": ".",
     "paths": {
       "@main/*": ["main/*"],
-      "@test-data/*": ["test_data/*"]
+      "@test-data/*": ["main/test_data/*"],
+      "@data-models/*": ["main/data_models/*"]
     },
     "resolveJsonModule": true,
     "esModuleInterop": true,

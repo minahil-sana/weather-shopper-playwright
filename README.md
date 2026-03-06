@@ -26,31 +26,54 @@ Automated test title:
 
 ## Framework Highlights
 
-- Import aliases are configured via `tsconfig.json` (`@main/*`, `@test-data/*`).
-- Spec file contains only test declaration and function call.
-- Business flow is implemented in reusable main-layer function.
-- Product selection logic is shared through `BaseProductPage` inheritance.
-- Payment data is externalized in `test_data/payment-data.json`.
+- Import aliases are configured via `tsconfig.json` (`@main/*`, `@test-data/*`, `@data-models/*`).
+- Snake_case naming is used for folders and files.
+- POM is split by page into `locators`, `actions`, `assertions`, and `tasks` files.
+- Spec file contains only test declaration and task invocation.
+- Business flow orchestration is implemented in `main/flow_tasks/tc_001_shopping_flow_task.ts`.
+- Payment data is externalized in `main/test_data/payment_data.json`.
 
 ## Project Structure
 
 ```text
 Weather_shopper/
 |- main/
-|  |- baseProductPage.ts
-|  |- homePage.ts
-|  |- moisturiserPage.ts
-|  |- sunscreenPage.ts
-|  |- cartPage.ts
-|  |- confirmationPage.ts
-|  |- tc001ShoppingFlow.ts
+|  |- home_page/
+|  |  |- home_page_locators.ts
+|  |  |- home_page_actions.ts
+|  |  |- home_page_assertions.ts
+|  |  |- home_page_tasks.ts
+|  |- moisturizer_page/
+|  |  |- moisturizer_page_locators.ts
+|  |  |- moisturizer_page_actions.ts
+|  |  |- moisturizer_page_assertions.ts
+|  |  |- moisturizer_page_tasks.ts
+|  |- sunscreen_page/
+|  |  |- sunscreen_page_locators.ts
+|  |  |- sunscreen_page_actions.ts
+|  |  |- sunscreen_page_assertions.ts
+|  |  |- sunscreen_page_tasks.ts
+|  |- cart_page/
+|  |  |- cart_page_locators.ts
+|  |  |- cart_page_actions.ts
+|  |  |- cart_page_assertions.ts
+|  |  |- cart_page_tasks.ts
+|  |- confirmation_page/
+|  |  |- confirmation_page_locators.ts
+|  |  |- confirmation_page_actions.ts
+|  |  |- confirmation_page_assertions.ts
+|  |  |- confirmation_page_tasks.ts
+|  |- flow_tasks/
+|  |  |- tc_001_shopping_flow_task.ts
+|  |- data_models/
+|  |  |- payment_data_model.ts
+|  |- test_data/
+|  |  |- payment_data.json
 |- tests/
-|  |- tc-001-complete-purchase-flow.spec.ts
-|- test_data/
-|  |- payment-data.json
+|  |- tc_001_complete_purchase_flow.spec.ts
 |- playwright.config.ts
 |- tsconfig.json
-|- manual-testcase.md
+|- manual_test_case.md
 |- README.md
 ```
 
@@ -71,7 +94,7 @@ npx playwright install
 Run the complete purchase flow test:
 
 ```bash
-npx playwright test tests/tc-001-complete-purchase-flow.spec.ts
+npx playwright test tests/tc_001_complete_purchase_flow.spec.ts
 ```
 
 Run by test title:
@@ -83,13 +106,13 @@ npx playwright test -g "TC_001"
 Run on a specific browser (example: Firefox):
 
 ```bash
-npx playwright test tests/tc-001-complete-purchase-flow.spec.ts --project firefox
+npx playwright test tests/tc_001_complete_purchase_flow.spec.ts --project firefox
 ```
 
 Run in headed mode:
 
 ```bash
-npx playwright test tests/tc-001-complete-purchase-flow.spec.ts --headed --project chromium
+npx playwright test tests/tc_001_complete_purchase_flow.spec.ts --headed --project chromium
 ```
 
 ## Reports
@@ -108,6 +131,6 @@ Report file is also available at `playwright-report/index.html`.
 
 - Browser projects enabled by default: `chromium`, `firefox`, `webkit`.
 - Retry and worker behavior automatically adjust on CI via `playwright.config.ts`.
-- Manual test documentation is available in `manual-testcase.md`.
+- Manual test documentation is available in `manual_test_case.md`.
 
 
