@@ -1,30 +1,22 @@
 # Weather Shopper E2E Tests
 
-Playwright end-to-end automation for the Weather Shopper demo site using a Page Object Model (POM) structure.
-
-Review updates applied:
-- Import aliases are used for project file imports.
-- `tsconfig.json` is added at the project root.
-- Spec file only calls a reusable flow function.
-- `pages/` folder is renamed to `main/`.
-- Payment test data is externalized to JSON.
-- Implemented reusable BaseProductPage using inheritance to eliminate duplicate code between Moisturizer and Sunscreen pages.
+Playwright end-to-end automation for the Weather Shopper demo site using a Page Object Model (POM) architecture.
 
 ## Overview
 
-This project validates the moisturizer purchase flow on:
-`http://weathershopper.pythonanywhere.com/`
+Test URL: `http://weathershopper.pythonanywhere.com/`
 
-Current implemented scenario:
-- Read current temperature on home page
-- If temperature is below 19 C, open moisturizers page
-- Add the cheapest products containing `Aloe` and `Almond`
-- Verify cart item count and total price
-- Complete Stripe checkout using test card data
-- Validate confirmation message
+Current implemented flow (`TC_001`):
+- Read the current temperature on the home page.
+- If temperature is below 19 C: buy moisturizers (least expensive `Aloe` and `Almond`).
+- If temperature is above 34 C: buy sunscreens (least expensive `SPF-50` and `SPF-30`).
+- If temperature is between 19 and 34 C: no purchase path is executed and flow exits.
+- Validate cart count and cart total.
+- Complete payment using Stripe test data from JSON.
+- Validate confirmation message.
 
-Automated test case title:
-- `TC_001: Verify successful moisturizer purchase when temperature is below 19C`
+Automated test title:
+- `TC_001: Verify end-to-end shopping flow based on temperature`
 
 ## Tech Stack
 
@@ -32,18 +24,28 @@ Automated test case title:
 - TypeScript
 - Playwright (`@playwright/test`)
 
+## Framework Highlights
+
+- Import aliases are configured via `tsconfig.json` (`@main/*`, `@test-data/*`).
+- Spec file contains only test declaration and function call.
+- Business flow is implemented in reusable main-layer function.
+- Product selection logic is shared through `BaseProductPage` inheritance.
+- Payment data is externalized in `test_data/payment-data.json`.
+
 ## Project Structure
 
 ```text
 Weather_shopper/
 |- main/
+|  |- baseProductPage.ts
 |  |- homePage.ts
 |  |- moisturiserPage.ts
+|  |- sunscreenPage.ts
 |  |- cartPage.ts
 |  |- confirmationPage.ts
-|  |- tc001MoisturizerFlow.ts
+|  |- tc001ShoppingFlow.ts
 |- tests/
-|  |- tc-001-moisturizer-purchase.spec.ts
+|  |- tc-001-complete-purchase-flow.spec.ts
 |- test_data/
 |  |- payment-data.json
 |- playwright.config.ts
@@ -66,11 +68,10 @@ npx playwright install
 
 ## Running Tests
 
-
-Run the moisturizer flow test:
+Run the complete purchase flow test:
 
 ```bash
-npx playwright test tests/tc-001-moisturizer-purchase.spec.ts
+npx playwright test tests/tc-001-complete-purchase-flow.spec.ts
 ```
 
 Run by test title:
@@ -82,30 +83,31 @@ npx playwright test -g "TC_001"
 Run on a specific browser (example: Firefox):
 
 ```bash
-npx playwright test tests/tc-001-moisturizer-purchase.spec.ts --project firefox
+npx playwright test tests/tc-001-complete-purchase-flow.spec.ts --project firefox
 ```
 
 Run in headed mode:
 
 ```bash
-npx playwright test tests/tc-001-moisturizer-purchase.spec.ts --headed --project chromium
+npx playwright test tests/tc-001-complete-purchase-flow.spec.ts --headed --project chromium
 ```
 
 ## Reports
 
-This project uses the HTML reporter (configured in `playwright.config.ts`).
+HTML reporter is configured in `playwright.config.ts`.
 
-After test execution, open the report with:
+Open the report:
 
 ```bash
 npx playwright show-report
 ```
-It can also be viewed in the playwright-report folder named as `index.html`.
+
+Report file is also available at `playwright-report/index.html`.
+
 ## Notes
 
 - Browser projects enabled by default: `chromium`, `firefox`, `webkit`.
-- Retry and worker behavior changes automatically on CI via `playwright.config.ts`.
-- Detailed manual test documentation is available in `manual-testcase.md`.
-- Payment inputs used in automation are read from `test_data/payment-data.json`.
+- Retry and worker behavior automatically adjust on CI via `playwright.config.ts`.
+- Manual test documentation is available in `manual-testcase.md`.
 
 
