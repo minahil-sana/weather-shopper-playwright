@@ -1,22 +1,26 @@
-import { expect } from '@playwright/test';
-import { SunscreenPageLocators } from '@main/ui/sunscreen_page/sunscreen_page_locators';
+import { expect, Page } from '@playwright/test';
+import { getSunscreenPageLocators } from '@main/ui/sunscreen_page/sunscreen_page_locators';
 
-export class SunscreenPageAssertions {
-  readonly locators: SunscreenPageLocators;
+export async function verifySunscreenPageOpened(page: Page): Promise<void> {
+  await expect(page).toHaveURL(/sunscreen/);
+}
 
-  constructor(locators: SunscreenPageLocators) {
-    this.locators = locators;
-  }
+export async function verifySunscreenProductGridVisible(page: Page): Promise<void> {
+  const locators = getSunscreenPageLocators(page);
+  await locators.productBlocks.first().waitFor({ state: 'visible' });
+}
 
-  async verifyProductGridVisible(): Promise<void> {
-    await this.locators.productBlocks.first().waitFor({ state: 'visible' });
-  }
+export async function verifySunscreenCartIsEmpty(page: Page): Promise<void> {
+  const locators = getSunscreenPageLocators(page);
+  await expect(locators.cartStatusSpan).toHaveText('Empty');
+}
 
-  async verifyCartIsNotEmpty(): Promise<void> {
-    await expect(this.locators.cartStatusSpan).not.toHaveText('Empty', { timeout: 10000 });
-  }
+export async function verifySunscreenCartIsNotEmpty(page: Page): Promise<void> {
+  const locators = getSunscreenPageLocators(page);
+  await expect(locators.cartStatusSpan).not.toHaveText('Empty', { timeout: 10000 });
+}
 
-  async verifyCartItemCount(expected_count: number): Promise<void> {
-    await expect(this.locators.cartStatusSpan).toContainText(String(expected_count));
-  }
+export async function verifySunscreenCartItemCount(page: Page, expectedCount: number): Promise<void> {
+  const locators = getSunscreenPageLocators(page);
+  await expect(locators.cartStatusSpan).toContainText(String(expectedCount));
 }

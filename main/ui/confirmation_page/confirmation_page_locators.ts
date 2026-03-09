@@ -1,9 +1,11 @@
 import { Locator, Page } from '@playwright/test';
 
-export class ConfirmationPageLocators {
-  readonly confirmationMessage: Locator;
+export interface ConfirmationPageLocators {
+  confirmationMessage: Locator;
+}
 
-  constructor(page: Page) {
-    this.confirmationMessage = page.locator('div p').first();
-  }
+export function getConfirmationPageLocators(page: Page): ConfirmationPageLocators {
+  return {
+    confirmationMessage: page.locator('div p').first(),
+  };
 }

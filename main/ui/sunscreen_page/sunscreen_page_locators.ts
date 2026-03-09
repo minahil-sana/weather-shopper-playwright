@@ -1,13 +1,15 @@
 import { Locator, Page } from '@playwright/test';
 
-export class SunscreenPageLocators {
-  readonly productBlocks: Locator;
-  readonly cartButton: Locator;
-  readonly cartStatusSpan: Locator;
+export interface SunscreenPageLocators {
+  productBlocks: Locator;
+  cartButton: Locator;
+  cartStatusSpan: Locator;
+}
 
-  constructor(page: Page) {
-    this.productBlocks = page.locator('div.text-center.col-4');
-    this.cartButton = page.locator('button:has-text("Cart")');
-    this.cartStatusSpan = page.locator('button:has-text("Cart") >> span');
-  }
+export function getSunscreenPageLocators(page: Page): SunscreenPageLocators {
+  return {
+    productBlocks: page.locator('div.text-center.col-4'),
+    cartButton: page.locator('button:has-text("Cart")'),
+    cartStatusSpan: page.locator('button:has-text("Cart") >> span'),
+  };
 }

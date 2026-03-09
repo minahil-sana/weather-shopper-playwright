@@ -1,52 +1,56 @@
 import { Page } from '@playwright/test';
-import { SunscreenPageLocators } from '@main/ui/sunscreen_page/sunscreen_page_locators';
+import { getSunscreenPageLocators } from '@main/ui/sunscreen_page/sunscreen_page_locators';
 
-export class SunscreenPageActions {
-  readonly page: Page;
-  readonly locators: SunscreenPageLocators;
+export interface SelectedProduct {
+  name: string;
+  price: number;
+}
 
-  constructor(page: Page, locators: SunscreenPageLocators) {
-    this.page = page;
-    this.locators = locators;
-  }
+export async function addLeastExpensiveSunscreenContaining(page: Page, keyword: string): Promise<SelectedProduct> {
+  const locators = getSunscreenPageLocators(page);
+  await page.waitForLoadState('networkidle');
+  await locators.productBlocks.first().waitFor({ state: 'visible' });
 
-  async addLeastExpensiveProductContaining(keyword: string): Promise<void> {
-    await this.page.waitForLoadState('networkidle');
-    await this.locators.productBlocks.first().waitFor({ state: 'visible' });
+  const count = await locators.productBlocks.count();
+  let minPrice = Number.MAX_SAFE_INTEGER;
+  let targetIndex = -1;
+  let selectedProductName = '';
 
-    const count = await this.locators.productBlocks.count();
-    let minPrice = Number.MAX_SAFE_INTEGER;
-    let targetIndex = -1;
+  for (let index = 0; index < count; index++) {
+    const product = locators.productBlocks.nth(index);
+    const name = (await product.locator('p.font-weight-bold').textContent())?.toLowerCase();
+    const priceText = await product.locator('p:has-text("Price")').textContent();
+    if (!name || !priceText) continue;
 
-    for (let i = 0; i < count; i++) {
-      const product = this.locators.productBlocks.nth(i);
-      const name = (await product.locator('p.font-weight-bold').textContent())?.toLowerCase();
-      const priceText = await product.locator('p:has-text("Price")').textContent();
-      if (!name || !priceText) continue;
+    if (name.includes(keyword.toLowerCase())) {
+      const priceMatch = priceText.match(/\d+/);
+      if (!priceMatch) continue;
 
-      if (name.includes(keyword.toLowerCase())) {
-        const priceMatch = priceText.match(/\d+/);
-        if (!priceMatch) continue;
-
-        const price = parseInt(priceMatch[0], 10);
-        if (price < minPrice) {
-          minPrice = price;
-          targetIndex = i;
-        }
+      const price = parseInt(priceMatch[0], 10);
+      if (price < minPrice) {
+        minPrice = price;
+        targetIndex = index;
+        selectedProductName = name;
       }
     }
-
-    if (targetIndex === -1) {
-      throw new Error(`No product found containing keyword: ${keyword}`);
-    }
-
-    const addButton = this.locators.productBlocks.nth(targetIndex).getByRole('button', { name: 'Add' });
-    await addButton.waitFor({ state: 'visible' });
-    await this.page.waitForTimeout(500);
-    await addButton.click();
   }
 
-  async clickCart(): Promise<void> {
-    await this.locators.cartButton.click();
+  if (targetIndex === -1) {
+    throw new Error(`No product found containing keyword: ${keyword}`);
   }
+
+  const addButton = locators.productBlocks.nth(targetIndex).getByRole('button', { name: 'Add' });
+  await addButton.waitFor({ state: 'visible' });
+  await page.waitForTimeout(500);
+  await addButton.click();
+
+  return {
+    name: selectedProductName,
+    price: minPrice,
+  };
+}
+
+export async function clickSunscreenCart(page: Page): Promise<void> {
+  const locators = getSunscreenPageLocators(page);
+  await locators.cartButton.click();
 }

@@ -6,7 +6,7 @@ export interface PaymentData {
   zip: string;
 }
 
-export const payment_data: PaymentData = {
+export const paymentData: PaymentData = {
   email: 'test@test.com',
   cardNumber: '4242424242424242',
   expiry: '12/27',

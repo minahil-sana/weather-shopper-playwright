@@ -1,27 +1,22 @@
 import { Page } from '@playwright/test';
-import { SunscreenPageActions } from '@main/ui/sunscreen_page/sunscreen_page_actions';
-import { SunscreenPageAssertions } from '@main/ui/sunscreen_page/sunscreen_page_assertions';
-import { SunscreenPageLocators } from '@main/ui/sunscreen_page/sunscreen_page_locators';
+import * as sunscreenPageActions from '@main/ui/sunscreen_page/sunscreen_page_actions';
+import * as sunscreenPageAssertions from '@main/ui/sunscreen_page/sunscreen_page_assertions';
 
-export class SunscreenPageTasks {
-  readonly actions: SunscreenPageActions;
-  readonly assertions: SunscreenPageAssertions;
+export async function addRequiredSunscreensToCart(
+  page: Page,
+): Promise<sunscreenPageActions.SelectedProduct[]> {
+  await sunscreenPageAssertions.verifySunscreenPageOpened(page);
+  await sunscreenPageAssertions.verifySunscreenProductGridVisible(page);
+  await sunscreenPageAssertions.verifySunscreenCartIsEmpty(page);
 
-  constructor(page: Page) {
-    const locators = new SunscreenPageLocators(page);
-    this.actions = new SunscreenPageActions(page, locators);
-    this.assertions = new SunscreenPageAssertions(locators);
-  }
+  const spf50Product = await sunscreenPageActions.addLeastExpensiveSunscreenContaining(page, 'SPF-50');
+  await sunscreenPageAssertions.verifySunscreenCartIsNotEmpty(page);
+  const spf30Product = await sunscreenPageActions.addLeastExpensiveSunscreenContaining(page, 'SPF-30');
+  await sunscreenPageAssertions.verifySunscreenCartItemCount(page, 2);
 
-  async addRequiredSunscreensToCart(): Promise<void> {
-    await this.assertions.verifyProductGridVisible();
-    await this.actions.addLeastExpensiveProductContaining('SPF-50');
-    await this.assertions.verifyCartIsNotEmpty();
-    await this.actions.addLeastExpensiveProductContaining('SPF-30');
-    await this.assertions.verifyCartItemCount(2);
-  }
+  return [spf50Product, spf30Product];
+}
 
-  async openCart(): Promise<void> {
-    await this.actions.clickCart();
-  }
+export async function openSunscreenCart(page: Page): Promise<void> {
+  await sunscreenPageActions.clickSunscreenCart(page);
 }

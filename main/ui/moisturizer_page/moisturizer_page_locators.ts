@@ -1,13 +1,15 @@
 import { Locator, Page } from '@playwright/test';
 
-export class MoisturizerPageLocators {
-  readonly productBlocks: Locator;
-  readonly cartButton: Locator;
-  readonly cartStatusSpan: Locator;
+export interface MoisturizerPageLocators {
+  productBlocks: Locator;
+  cartButton: Locator;
+  cartStatusSpan: Locator;
+}
 
-  constructor(page: Page) {
-    this.productBlocks = page.locator('div.text-center.col-4');
-    this.cartButton = page.locator('button:has-text("Cart")');
-    this.cartStatusSpan = page.locator('button:has-text("Cart") >> span');
-  }
+export function getMoisturizerPageLocators(page: Page): MoisturizerPageLocators {
+  return {
+    productBlocks: page.locator('div.text-center.col-4'),
+    cartButton: page.locator('button:has-text("Cart")'),
+    cartStatusSpan: page.locator('button:has-text("Cart") >> span'),
+  };
 }

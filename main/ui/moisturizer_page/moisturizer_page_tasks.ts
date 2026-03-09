@@ -1,27 +1,22 @@
 import { Page } from '@playwright/test';
-import { MoisturizerPageActions } from '@main/ui/moisturizer_page/moisturizer_page_actions';
-import { MoisturizerPageAssertions } from '@main/ui/moisturizer_page/moisturizer_page_assertions';
-import { MoisturizerPageLocators } from '@main/ui/moisturizer_page/moisturizer_page_locators';
+import * as moisturizerPageActions from '@main/ui/moisturizer_page/moisturizer_page_actions';
+import * as moisturizerPageAssertions from '@main/ui/moisturizer_page/moisturizer_page_assertions';
 
-export class MoisturizerPageTasks {
-  readonly actions: MoisturizerPageActions;
-  readonly assertions: MoisturizerPageAssertions;
+export async function addRequiredMoisturizersToCart(
+  page: Page,
+): Promise<moisturizerPageActions.SelectedProduct[]> {
+  await moisturizerPageAssertions.verifyMoisturizerPageOpened(page);
+  await moisturizerPageAssertions.verifyMoisturizerProductGridVisible(page);
+  await moisturizerPageAssertions.verifyMoisturizerCartIsEmpty(page);
 
-  constructor(page: Page) {
-    const locators = new MoisturizerPageLocators(page);
-    this.actions = new MoisturizerPageActions(page, locators);
-    this.assertions = new MoisturizerPageAssertions(locators);
-  }
+  const aloeProduct = await moisturizerPageActions.addLeastExpensiveMoisturizerContaining(page, 'Aloe');
+  await moisturizerPageAssertions.verifyMoisturizerCartIsNotEmpty(page);
+  const almondProduct = await moisturizerPageActions.addLeastExpensiveMoisturizerContaining(page, 'Almond');
+  await moisturizerPageAssertions.verifyMoisturizerCartItemCount(page, 2);
 
-  async addRequiredMoisturizersToCart(): Promise<void> {
-    await this.assertions.verifyProductGridVisible();
-    await this.actions.addLeastExpensiveProductContaining('Aloe');
-    await this.assertions.verifyCartIsNotEmpty();
-    await this.actions.addLeastExpensiveProductContaining('Almond');
-    await this.assertions.verifyCartItemCount(2);
-  }
+  return [aloeProduct, almondProduct];
+}
 
-  async openCart(): Promise<void> {
-    await this.actions.clickCart();
-  }
+export async function openMoisturizerCart(page: Page): Promise<void> {
+  await moisturizerPageActions.clickMoisturizerCart(page);
 }

@@ -1,32 +1,55 @@
-import { Page } from '@playwright/test';
-import { HomePageActions } from '@main/ui/home_page/home_page_actions';
-import { HomePageAssertions } from '@main/ui/home_page/home_page_assertions';
-import { HomePageLocators } from '@main/ui/home_page/home_page_locators';
+import { Page, test } from '@playwright/test';
+import * as homePageActions from '@main/ui/home_page/home_page_actions';
+import * as homePageAssertions from '@main/ui/home_page/home_page_assertions';
+import * as moisturizerPageTasks from '@main/ui/moisturizer_page/moisturizer_page_tasks';
+import * as sunscreenPageTasks from '@main/ui/sunscreen_page/sunscreen_page_tasks';
 
-export class HomePageTasks {
-  readonly actions: HomePageActions;
-  readonly assertions: HomePageAssertions;
+export type ShoppingDecision = 'moisturizer' | 'sunscreen' | 'none';
 
-  constructor(page: Page) {
-    const locators = new HomePageLocators(page);
-    this.actions = new HomePageActions(page, locators);
-    this.assertions = new HomePageAssertions(locators);
+export async function openHomePage(page: Page): Promise<void> {
+  await homePageActions.navigateToHomePage(page);
+  await homePageAssertions.verifyHomePageLoaded(page);
+}
+
+export async function getCurrentTemperature(page: Page): Promise<number> {
+  return homePageActions.getTemperatureValue(page);
+}
+
+export async function navigateToProductPageForTemperature(
+  page: Page,
+  temperature: number,
+): Promise<ShoppingDecision> {
+  if (temperature < 19) {
+    await homePageActions.clickBuyMoisturizers(page);
+    return 'moisturizer';
   }
 
-  async openHomePage(): Promise<void> {
-    await this.actions.navigateToHomePage();
-    await this.assertions.verifyHomePageLoaded();
+  if (temperature > 34) {
+    await homePageActions.clickBuySunscreens(page);
+    return 'sunscreen';
   }
 
-  async getCurrentTemperature(): Promise<number> {
-    return this.actions.getTemperatureValue();
+  return 'none';
+}
+
+export async function handleTemperatureBasedProductFlow(
+  page: Page,
+  temperature: number,
+): Promise<Array<{ name: string; price: number }>> {
+  const decision = await navigateToProductPageForTemperature(page, temperature);
+
+  if (decision === 'moisturizer') {
+    const selectedProducts = await moisturizerPageTasks.addRequiredMoisturizersToCart(page);
+    await moisturizerPageTasks.openMoisturizerCart(page);
+    return selectedProducts;
   }
 
-  async openMoisturizersPage(): Promise<void> {
-    await this.actions.clickBuyMoisturizers();
+  if (decision === 'sunscreen') {
+    const selectedProducts = await sunscreenPageTasks.addRequiredSunscreensToCart(page);
+    await sunscreenPageTasks.openSunscreenCart(page);
+    return selectedProducts;
   }
 
-  async openSunscreensPage(): Promise<void> {
-    await this.actions.clickBuySunscreens();
-  }
+  test.skip(true, `Temperature ${temperature}C is between 19 and 34; no shopping required.`);
+  return [];
 }
