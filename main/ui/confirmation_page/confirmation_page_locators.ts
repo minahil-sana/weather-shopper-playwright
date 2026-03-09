@@ -1,9 +1,9 @@
 import { Locator, Page } from '@playwright/test';
 
 export class ConfirmationPageLocators {
-  readonly confirmation_message: Locator;
+  readonly confirmationMessage: Locator;
 
   constructor(page: Page) {
-    this.confirmation_message = page.locator('div p').first();
+    this.confirmationMessage = page.locator('div p').first();
   }
 }

@@ -1,5 +1,5 @@
 import { Page } from '@playwright/test';
-import { HomePageLocators } from '@main/home_page/home_page_locators';
+import { HomePageLocators } from '@main/ui/home_page/home_page_locators';
 
 export class HomePageActions {
   readonly page: Page;
@@ -10,12 +10,12 @@ export class HomePageActions {
     this.locators = locators;
   }
 
-  async navigate_to_home_page(): Promise<void> {
+  async navigateToHomePage(): Promise<void> {
     await this.page.goto('http://weathershopper.pythonanywhere.com/');
   }
 
-  async get_temperature_value(): Promise<number> {
-    const text = await this.locators.temperature_text.textContent();
+  async getTemperatureValue(): Promise<number> {
+    const text = await this.locators.temperatureText.textContent();
     if (!text) throw new Error('Temperature not found');
 
     const match = text.match(/\d+/);
@@ -24,11 +24,11 @@ export class HomePageActions {
     return parseInt(match[0], 10);
   }
 
-  async click_buy_moisturizers(): Promise<void> {
-    await this.locators.buy_moisturizers_button.click();
+  async clickBuyMoisturizers(): Promise<void> {
+    await this.locators.buyMoisturizersButton.click();
   }
 
-  async click_buy_sunscreens(): Promise<void> {
-    await this.locators.buy_sunscreens_button.click();
+  async clickBuySunscreens(): Promise<void> {
+    await this.locators.buySunscreensButton.click();
   }
 }

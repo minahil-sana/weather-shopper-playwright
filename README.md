@@ -12,7 +12,7 @@ Current implemented flow (`TC_001`):
 - If temperature is above 34 C: buy sunscreens (least expensive `SPF-50` and `SPF-30`).
 - If temperature is between 19 and 34 C: no purchase path is executed and flow exits.
 - Validate cart count and cart total.
-- Complete payment using Stripe test data from JSON.
+- Complete payment using Stripe test data from one typed TypeScript file.
 - Validate confirmation message.
 
 Automated test title:
@@ -26,18 +26,18 @@ Automated test title:
 
 ## Framework Highlights
 
-- Import aliases are configured via `tsconfig.json` (`@main/*`, `@test-data/*`, `@data-models/*`).
+- Import aliases are configured via `tsconfig.json` (`@main/*`, `@test-data/*`).
 - Snake_case naming is used for folders and files.
 - POM is split by page into `locators`, `actions`, `assertions`, and `tasks` files.
 - Spec file contains only test declaration and task invocation.
 - Business flow orchestration is implemented in `main/flow_tasks/tc_001_shopping_flow_task.ts`.
-- Payment data is externalized in `main/test_data/payment_data.json`.
+- Payment data and its shared type are centralized in `main/ui/test_data/payment_data.ts`.
 
 ## Project Structure
 
 ```text
 Weather_shopper/
-|- main/
+|- main/ui/
 |  |- home_page/
 |  |  |- home_page_locators.ts
 |  |  |- home_page_actions.ts
@@ -65,10 +65,8 @@ Weather_shopper/
 |  |  |- confirmation_page_tasks.ts
 |  |- flow_tasks/
 |  |  |- tc_001_shopping_flow_task.ts
-|  |- data_models/
-|  |  |- payment_data_model.ts
 |  |- test_data/
-|  |  |- payment_data.json
+|  |  |- payment_data.ts
 |- tests/
 |  |- tc_001_complete_purchase_flow.spec.ts
 |- playwright.config.ts
