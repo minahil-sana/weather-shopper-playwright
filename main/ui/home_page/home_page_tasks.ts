@@ -1,8 +1,8 @@
 import { Page, test } from '@playwright/test';
 import * as homePageActions from '@main/ui/home_page/home_page_actions';
 import * as homePageAssertions from '@main/ui/home_page/home_page_assertions';
-import * as moisturizerPageTasks from '@main/ui/moisturizer_page/moisturizer_page_tasks';
-import * as sunscreenPageTasks from '@main/ui/sunscreen_page/sunscreen_page_tasks';
+import * as productPageActions from '@main/ui/product_page/product_page_actions';
+import * as productPageTasks from '@main/ui/product_page/product_page_tasks';
 
 export type ShoppingDecision = 'moisturizer' | 'sunscreen' | 'none';
 
@@ -39,14 +39,14 @@ export async function handleTemperatureBasedProductFlow(
   const decision = await navigateToProductPageForTemperature(page, temperature);
 
   if (decision === 'moisturizer') {
-    const selectedProducts = await moisturizerPageTasks.addRequiredMoisturizersToCart(page);
-    await moisturizerPageTasks.openMoisturizerCart(page);
+    const selectedProducts = await productPageTasks.addRequiredMoisturizersToCart(page);
+    await productPageActions.openProductCart(page);
     return selectedProducts;
   }
 
   if (decision === 'sunscreen') {
-    const selectedProducts = await sunscreenPageTasks.addRequiredSunscreensToCart(page);
-    await sunscreenPageTasks.openSunscreenCart(page);
+    const selectedProducts = await productPageTasks.addRequiredSunscreensToCart(page);
+    await productPageActions.openProductCart(page);
     return selectedProducts;
   }
 

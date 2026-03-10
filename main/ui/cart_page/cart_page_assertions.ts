@@ -1,4 +1,6 @@
 import { expect, Page } from '@playwright/test';
+import * as cartPageActions from '@main/ui/cart_page/cart_page_actions';
+
 
 export interface SelectedProductForCart {
   name: string;
@@ -47,4 +49,19 @@ export async function verifyCartTotalMatchesSum(productPrices: number[], totalPr
 
 export async function verifyRedirectedToConfirmation(page: Page): Promise<void> {
   await expect(page).toHaveURL(/confirmation/);
+}
+
+export async function validateCartSummary(
+  page: Page,
+  selectedProducts: SelectedProductForCart[],
+): Promise<void> {
+  await verifyCartPageOpened(page);
+
+  const productNames = await cartPageActions.getCartProductNames(page);
+  const productPrices = await cartPageActions.getCartProductPrices(page);
+  const totalPrice = await cartPageActions.getCartTotalPrice(page);
+
+  await verifyCartHasTwoItems(productNames, productPrices);
+  await verifyCartProductsMatchSelected(productNames, productPrices, selectedProducts);
+  await verifyCartTotalMatchesSum(productPrices, totalPrice);
 }

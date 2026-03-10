@@ -2,24 +2,37 @@ import { Page } from '@playwright/test';
 import * as cartPageActions from '@main/ui/cart_page/cart_page_actions';
 import * as cartPageAssertions from '@main/ui/cart_page/cart_page_assertions';
 import { PaymentData } from '@main/test_data/payment_data';
+import { getCartPageLocators } from '@main/ui/cart_page/cart_page_locators';
 
-export async function validateCartSummary(
-  page: Page,
-  selectedProducts: cartPageAssertions.SelectedProductForCart[],
-): Promise<void> {
-  await cartPageAssertions.verifyCartPageOpened(page);
-
-  const productNames = await cartPageActions.getCartProductNames(page);
-  const productPrices = await cartPageActions.getCartProductPrices(page);
-  const totalPrice = await cartPageActions.getCartTotalPrice(page);
-
-  await cartPageAssertions.verifyCartHasTwoItems(productNames, productPrices);
-  await cartPageAssertions.verifyCartProductsMatchSelected(productNames, productPrices, selectedProducts);
-  await cartPageAssertions.verifyCartTotalMatchesSum(productPrices, totalPrice);
-}
 
 export async function completeCheckout(page: Page, paymentData: PaymentData): Promise<void> {
   await cartPageActions.clickPayWithCard(page);
-  await cartPageActions.completeStripePayment(page, paymentData);
+  await completeStripePayment(page, paymentData);
   await cartPageAssertions.verifyRedirectedToConfirmation(page);
+}
+
+export async function completeStripePayment(page: Page, paymentData: PaymentData): Promise<void> {
+  const locators = getCartPageLocators(page);
+  await locators.stripeEmailInput.fill(paymentData.email);
+
+  const cardNumberField = locators.stripeCardNumberInput;
+  await cardNumberField.click();
+  await page.waitForTimeout(300);
+  await cardNumberField.pressSequentially(paymentData.cardNumber, { delay: 100 });
+
+  const expiryField = locators.stripeExpiryInput;
+  await expiryField.waitFor({ state: 'visible', timeout: 15000 });
+  await expiryField.fill(paymentData.expiry);
+
+  const cvcField = locators.stripeCvcInput;
+  await cvcField.waitFor({ state: 'visible', timeout: 15000 });
+  await cvcField.fill(paymentData.cvc);
+
+  const zipField = locators.stripeZipInput;
+  const zipIsVisible = await zipField.isVisible();
+  if (zipIsVisible) {
+    await zipField.fill(paymentData.zip);
+  }
+
+  await locators.stripeSubmitButton.click();
 }
