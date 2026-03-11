@@ -10,14 +10,14 @@ Implemented automated scenario:
 - `TC_001: Verify end-to-end shopping flow based on temperature`
 
 Current flow:
-1. Open home page and verify temperature is visible.
-2. Read temperature.
-3. Navigate to the relevant product page:
-- `< 19 C`: Moisturizers.
-- `> 34 C`: Sunscreens.
-- `19 C to 34 C`: test is skipped (no shopping required).
-4. Verify correct product page.
-5. Verify cart is empty.
+1. Open home page and verify the page is loaded.
+2. Read current temperature.
+3. Decide which product category to shop:
+- `< 19 C`: navigate to Moisturizers.
+- `> 34 C`: navigate to Sunscreens.
+- `19 C to 34 C`: log `no need to purchase anything` and return no selected products.
+4. For shopping paths (`< 19` or `> 34`) Verify correct Product Page.
+5. Verify cart is Empty.
 6. Add two least expensive products by keyword:
 - Moisturizers: `Aloe`, `Almond`
 - Sunscreens: `SPF-50`, `SPF-30`
@@ -25,7 +25,7 @@ Current flow:
 8. Open cart and verify cart page.
 9. Verify cart items match selected products and total equals sum.
 10. Complete Stripe checkout using test data.
-11. Verify redirect to confirmation page and success message.
+11. Verify redirect to confirmation page and success message. 
 
 ## Stack
 
@@ -41,11 +41,7 @@ Current flow:
 - `*_actions.ts`
 - `*_assertions.ts`
 - `*_tasks.ts`
-- Spec remains high-level and delegates behavior to page tasks.
-- Naming conventions:
-- snake_case for folders/files
-- camelCase for variables/functions
-- assertion functions prefixed with `verify...`
+
 
 ## Import Aliases
 
@@ -68,16 +64,11 @@ Weather_shopper/
 |  |  |  |- home_page_actions.ts
 |  |  |  |- home_page_assertions.ts
 |  |  |  |- home_page_tasks.ts
-|  |  |- moisturizer_page/
-|  |  |  |- moisturizer_page_locators.ts
-|  |  |  |- moisturizer_page_actions.ts
-|  |  |  |- moisturizer_page_assertions.ts
-|  |  |  |- moisturizer_page_tasks.ts
-|  |  |- sunscreen_page/
-|  |  |  |- sunscreen_page_locators.ts
-|  |  |  |- sunscreen_page_actions.ts
-|  |  |  |- sunscreen_page_assertions.ts
-|  |  |  |- sunscreen_page_tasks.ts
+|  |  |- product_page/
+|  |  |  |- product_page_locators.ts
+|  |  |  |- product_page_actions.ts
+|  |  |  |- product_page_assertions.ts
+|  |  |  |- product_page_tasks.ts
 |  |  |- cart_page/
 |  |  |  |- cart_page_locators.ts
 |  |  |  |- cart_page_actions.ts
@@ -87,12 +78,12 @@ Weather_shopper/
 |  |  |  |- confirmation_page_locators.ts
 |  |  |  |- confirmation_page_actions.ts
 |  |  |  |- confirmation_page_assertions.ts
-|  |  |  |- confirmation_page_tasks.ts
 |- tests/
 |  |- tc_001_complete_purchase_flow.spec.ts
 |- manual_test_case.md
 |- playwright.config.ts
 |- tsconfig.json
+|- package.json
 |- README.md
 ```
 
@@ -131,9 +122,7 @@ npx playwright test -g "TC_001"
 
 ## Reports
 
-HTML report is enabled in `playwright.config.ts`.
-
-Open the latest report:
+Open the latest HTML report:
 
 ```bash
 npx playwright show-report
@@ -143,8 +132,7 @@ Generated report path: `playwright-report/index.html`.
 
 ## Notes
 
-- Default browser projects: `chromium`, `firefox`, `webkit`.
-- CI behavior (retries/workers) is controlled in `playwright.config.ts`.
-- Manual test document: `manual_test_case.md`.
+- Browser projects and retries/workers are configured in `playwright.config.ts`.
+- Manual test reference is available in `manual_test_case.md`.
 
 
