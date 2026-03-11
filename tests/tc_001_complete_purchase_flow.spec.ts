@@ -10,6 +10,11 @@ test('TC_001: Verify end-to-end shopping flow based on temperature', async ({ pa
   const temperature = await homePageTasks.getCurrentTemperature(page);
   const selectedProducts = await homePageTasks.handleTemperatureBasedProductFlow(page, temperature);
 
+  test.skip(
+    selectedProducts.length === 0,
+    `No products to purchase based on the current temperature of ${temperature}C.`,
+  );
+
   await cartPage.validateCartSummary(page, selectedProducts);
   await cartPageTasks.completeCheckout(page, paymentData);
   await confirmationPage.validateCheckoutOutcome(page);
