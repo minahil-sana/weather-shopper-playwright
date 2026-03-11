@@ -1,4 +1,4 @@
-import { Page, test } from '@playwright/test';
+import { Page } from '@playwright/test';
 import * as homePageActions from '@main/ui/home_page/home_page_actions';
 import * as homePageAssertions from '@main/ui/home_page/home_page_assertions';
 import * as productPageActions from '@main/ui/product_page/product_page_actions';
@@ -29,6 +29,7 @@ export async function navigateToProductPageForTemperature(
     return 'sunscreen';
   }
 
+  console.log(`Temperature ${temperature}C is between 19 and 34; no need to purchase anything.`);
   return 'none';
 }
 
@@ -50,6 +51,5 @@ export async function handleTemperatureBasedProductFlow(
     return selectedProducts;
   }
 
-  test.skip(true, `Temperature ${temperature}C is between 19 and 34; no shopping required.`);
   return [];
 }

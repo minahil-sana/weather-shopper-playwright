@@ -1,14 +1,11 @@
 import { expect, Page } from '@playwright/test';
 import * as cartPageActions from '@main/ui/cart_page/cart_page_actions';
+import { normalizeProductName } from '@utils/browser_actions_utils';
 
 
 export interface SelectedProductForCart {
   name: string;
   price: number;
-}
-
-function normalizeProductName(value: string): string {
-  return value.trim().toLowerCase();
 }
 
 export async function verifyCartPageOpened(page: Page): Promise<void> {
